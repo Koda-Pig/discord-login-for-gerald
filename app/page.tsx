@@ -1,14 +1,11 @@
+"use client";
+
 import { LoginForm } from "@/components/login-form";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
-  return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <LoginForm />
-      </div>
-    </div>
-  );
-}
+  const { data: session } = useSession();
 
-// wallet connect and sign, skip oauth from discord
-//
+  console.info("session", session);
+  return <LoginForm />;
+}

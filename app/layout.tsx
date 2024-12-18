@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import localFont from "next/font/local";
-import { init } from "@/lib/onload";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -33,9 +31,6 @@ export default function RootLayout({
       >
         {children}
       </body>
-      <Script id="onload-script">
-        {`window.onload = () => (${init.toString()})()`}
-      </Script>
     </html>
   );
 }

@@ -19,3 +19,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Environments
 
 deployed here: https://discord-login-for-gerald.netlify.app/
+
+redeploy now

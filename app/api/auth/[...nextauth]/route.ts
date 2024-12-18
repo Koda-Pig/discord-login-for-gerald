@@ -4,8 +4,8 @@ import Discord from "next-auth/providers/discord";
 const handler = NextAuth({
   providers: [
     Discord({
-      clientId: process.env.DISCORD_APPLICATION_ID,
-      clientSecret: process.env.DISCORD_API_TOKEN
+      clientId: process.env.DISCORD_APPLICATION_ID as string,
+      clientSecret: process.env.DISCORD_API_TOKEN as string
     })
   ]
 });

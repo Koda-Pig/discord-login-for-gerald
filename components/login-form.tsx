@@ -1,14 +1,15 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+  CardTitle
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function LoginForm({
   className,
@@ -51,7 +52,13 @@ export function LoginForm({
                 Login
               </Button>
               <Button variant="outline" className="w-full">
-                Login with Google
+                Login with Discord
+                <Image
+                  src="/icons/discord.svg"
+                  alt="discord logo"
+                  width={24}
+                  height={24}
+                />
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
@@ -64,5 +71,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

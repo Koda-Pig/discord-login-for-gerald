@@ -9,3 +9,6 @@ export default function Page() {
     </div>
   );
 }
+
+// wallet connect and sign, skip oauth from discord
+//

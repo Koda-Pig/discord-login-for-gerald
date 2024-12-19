@@ -8,7 +8,7 @@ const handler = NextAuth({
       clientSecret: process.env.DISCORD_API_TOKEN as string,
       authorization: {
         params: {
-          redirect_uri: "http://localhost:3000/user"
+          redirect_uri: `${process.env.NEXTAUTH_URL}/user`
         }
       }
     })

@@ -18,7 +18,7 @@ export default function UserCardWithParams() {
             </span>{" "}
           </>
         ) : (
-          <>I&apos; afraid I have no idea who you are</>
+          <>I&apos;m afraid I have no idea who you are</>
         )
       }
       description="Put something here probably"

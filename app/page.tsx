@@ -1,11 +1,13 @@
-"use client";
-
-import { LoginForm } from "@/components/login-form";
-import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
-  const { data: session } = useSession();
-
-  console.info("session", session);
-  return <LoginForm />;
+  return (
+    <div className="text-center">
+      <h1 className="text-2xl mb-4">Welcome to Gerald AI™</h1>
+      <Button asChild>
+        <Link href="/signIn">Sign in</Link>
+      </Button>
+    </div>
+  );
 }

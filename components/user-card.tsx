@@ -1,4 +1,3 @@
-// import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { SignOutButton } from "@/components/sign-out-button";
 
 interface UserCardProps {
   title: string | React.ReactNode;
@@ -19,7 +19,9 @@ export function UserCard({ title, description }: Readonly<UserCardProps>) {
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>{/* <Image src='/' alt="" /> */}</CardContent>
+      <CardContent>
+        <SignOutButton />
+      </CardContent>
     </Card>
   );
 }

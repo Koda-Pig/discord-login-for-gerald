@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -8,11 +7,9 @@ import {
 } from "@/components/ui/card";
 import { SignInButton } from "./sign-in-button";
 
-export function DiscordLoginForm({
-  className
-}: Readonly<React.ComponentPropsWithoutRef<"div">>) {
+export function DiscordLoginForm() {
   return (
-    <div className={cn("flex flex-col gap-6", className)}>
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>

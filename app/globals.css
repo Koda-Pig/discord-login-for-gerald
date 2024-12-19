@@ -75,19 +75,4 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-
-  .card {
-    outline: 20px solid limegreen;
-  }
-}
-
-@layer components {
-  /* Overrides */
-  .card {
-    outline: 20px solid limegreen !important;
-  }
-  .card:has(#provider-logo) {
-    background-color: transparent;
-    border-radius: none;
-  }
 }

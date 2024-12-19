@@ -1,8 +1,4 @@
-"use client";
-
-import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,15 +6,11 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { signIn } from "next-auth/react";
+import { SignInButton } from "./sign-in-button";
 
 export function DiscordLoginForm({
   className
 }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
-  const handleDiscordSignIn = () => {
-    signIn("discord", { callbackUrl: "/user" });
-  };
-
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       <Card>
@@ -29,19 +21,7 @@ export function DiscordLoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button
-            className="w-full"
-            type="button"
-            onClick={handleDiscordSignIn}
-          >
-            Login with Discord
-            <Image
-              src="/icons/discord.svg"
-              alt="discord logo"
-              width={24}
-              height={24}
-            />
-          </Button>
+          <SignInButton />
         </CardContent>
       </Card>
     </div>

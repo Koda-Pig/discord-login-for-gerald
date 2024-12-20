@@ -3,14 +3,23 @@
 import { useEffect, useState } from "react";
 import { UserCard } from "@/components/user-card";
 import { useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { SignInButton } from "@/components/sign-in-button";
+
+interface DiscordUser {
+  user: {
+    id: string;
+    username: string;
+    global_name: string;
+    avatar: string;
+  };
+}
 
 const handleOAuthCallback = async ({
   code,
   setUserData
 }: {
   code: string;
-  setUserData: (x: unknown) => void;
+  setUserData: (x: null | DiscordUser) => void;
 }) => {
   try {
     const response = await fetch("/api/auth/discord/callback", {
@@ -22,30 +31,22 @@ const handleOAuthCallback = async ({
     });
 
     if (!response.ok) {
-      // console.error("Login failed. Response: ", response);
-      // setUserData(response);
-      return undefined;
+      console.error("Login failed. Response: ", response);
+      setUserData(null);
+      return;
     }
 
     const data = await response.json();
-    // console.log("Logged in user: ", data.user);
     setUserData(data);
-    return data;
   } catch (error) {
-    // console.error(error);
-    setUserData(error);
+    console.error(error);
   }
 };
 
 export default function UserCardWithParams() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const { data: session, status } = useSession();
-
-  // console.log("session: ", session);
-  // console.log("status: ", status);
-
-  const [userData, setUserData] = useState<unknown>(null);
+  const [userData, setUserData] = useState<DiscordUser | null>(null);
 
   useEffect(() => {
     if (!code) return;
@@ -55,8 +56,14 @@ export default function UserCardWithParams() {
   if (!code) {
     return (
       <UserCard
-        title={"I'm afraid I have no idea who you are"}
-        description="Try login again maybe?"
+        showSignout={false}
+        title="I'm afraid I have no idea who you are"
+        description={
+          <>
+            <p className="mb-4">Try login again maybe?</p>
+            <SignInButton />
+          </>
+        }
       />
     );
   }
@@ -67,11 +74,29 @@ export default function UserCardWithParams() {
         <>
           Hello{" "}
           <span className="break-words bg-gradient-to-r from-red-500 via-yellow-500 to-purple-500 bg-clip-text text-transparent">
-            {code}
+            {userData?.user?.username ?? "loading..."}
           </span>
         </>
       }
-      description={JSON.stringify(userData)}
+      description={
+        <div className="mt-4">
+          <p>
+            <strong>your ID</strong>: {userData?.user?.id ?? "loading..."}
+          </p>
+          <p>
+            <strong>your username</strong>:{" "}
+            {userData?.user?.username ?? "loading..."}
+          </p>
+          <p>
+            <strong>your global_name</strong>:{" "}
+            {userData?.user?.global_name ?? "loading..."}
+          </p>
+          <p>
+            <strong>your avatar</strong>:{" "}
+            {userData?.user?.avatar ?? "loading..."}
+          </p>
+        </div>
+      }
     />
   );
 }

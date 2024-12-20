@@ -9,19 +9,26 @@ import { SignOutButton } from "@/components/sign-out-button";
 
 interface UserCardProps {
   title: string | React.ReactNode;
-  description: string;
+  description: string | React.ReactNode;
+  showSignout?: boolean;
 }
 
-export function UserCard({ title, description }: Readonly<UserCardProps>) {
+export function UserCard({
+  title,
+  description,
+  showSignout = true
+}: Readonly<UserCardProps>) {
   return (
     <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <SignOutButton />
-      </CardContent>
+      {showSignout ?? (
+        <CardContent>
+          <SignOutButton />
+        </CardContent>
+      )}
     </Card>
   );
 }

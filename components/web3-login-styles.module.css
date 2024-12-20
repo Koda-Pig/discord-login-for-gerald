@@ -1,0 +1,17 @@
+.container {
+  margin-top: 3rem;
+}
+.container > div {
+  justify-content: center !important;
+}
+.container button {
+  font-family: "ApfelGrotezk", Helvetica, sans-serif !important;
+  background-color: var(--gerald-blue) !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+  font-size: 1.5rem !important;
+  font-weight: normal !important;
+}
+.container button:hover {
+  transform: none !important;
+  background-color: var(--gerald-blue-10) !important;
+}

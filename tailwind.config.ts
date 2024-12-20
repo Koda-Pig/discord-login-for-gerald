@@ -12,10 +12,10 @@ const config: Config = {
     extend: {
       colors: {
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        foreground: "var(--gerald-offwhite)",
         card: {
           DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))"
+          foreground: "var(--gerald-offwhite)"
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -50,12 +50,19 @@ const config: Config = {
           "3": "hsl(var(--chart-3))",
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))"
-        }
+        },
+        "gerald-blue": "var(--gerald-blue)",
+        "gerald-blue-10": "var(--gerald-blue-10)",
+        "gerald-offwhite": "var(--gerald-offwhite)"
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)"
+      },
+      backgroundImage: {
+        "screen-1": "url('/images/gerald-bg-1.webp')",
+        "screen-2": "url('/images/gerald-bg-2.webp')"
       }
     }
   },

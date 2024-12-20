@@ -1,24 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
 import { SignInButton } from "./sign-in-button";
 
 export function DiscordLoginForm() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Login with Discord using the button below:
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <SignInButton />
-      </CardContent>
-    </Card>
+    <div className="text-center">
+      <h1 className="text-3xl mb-6">Login</h1>
+      <p className="mb-14 text-xl">
+        Login with Discord using the button below:
+      </p>
+      <SignInButton />
+    </div>
   );
 }

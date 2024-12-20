@@ -10,8 +10,8 @@ export function SignInButton() {
   };
 
   return (
-    <Button className="w-full" type="button" onClick={handleDiscordSignIn}>
-      Login with Discord
+    <Button type="button" onClick={handleDiscordSignIn}>
+      Sign in
       <Image
         src="/icons/discord.svg"
         alt="discord logo"

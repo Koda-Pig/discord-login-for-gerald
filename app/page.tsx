@@ -5,7 +5,7 @@ import { Container } from "@/components/container";
 
 export default function Page() {
   return (
-    <Container bgImgClass="bg-screen-1">
+    <Container bg={1}>
       <div className="text-center">
         <h1 className="sr-only">Welcome to Gerald AI™</h1>
         <Image

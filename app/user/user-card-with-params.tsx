@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UserCard } from "@/components/user-card";
 import { useSearchParams } from "next/navigation";
@@ -7,7 +8,7 @@ import { SignInButton } from "@/components/sign-in-button";
 import { Web3Login } from "@/components/web3-login";
 import { useAccount } from "wagmi";
 
-const SUBMIT_ENDPOINT = "http://34.57.39.86:3000/user-address";
+const SUBMIT_ENDPOINT = "https://gerald.celium.network/user-address";
 
 interface DiscordUser {
   user: {
@@ -86,12 +87,34 @@ export default function UserCardWithParams() {
   const code = searchParams.get("code");
   const [userData, setUserData] = useState<DiscordUser | null>(null);
   const [dataSent, setDataSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
     if (!code || userData) return;
-    handleOAuthCallback({ code, setUserData: (data) => setUserData(data) });
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      setHasError(false);
+      try {
+        await handleOAuthCallback({
+          code,
+          setUserData: (data) => {
+            setUserData(data);
+            if (!data) setHasError(true);
+          }
+        });
+        // eslint-disable-next-line
+      } catch (error) {
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, [code]);
 
   useEffect(() => {
@@ -139,23 +162,28 @@ export default function UserCardWithParams() {
       title={
         <>
           Hello{" "}
-          <span className="break-words bg-gradient-to-r from-red-500 via-yellow-500 to-purple-500 bg-clip-text text-transparent">
-            {userData?.user?.username ?? "loading..."}
-          </span>
+          <span className="font-bold">{userData?.user?.username ?? "..."}</span>
+          {hasError && !isLoading && (
+            <p className="mt-3 mb-5">
+              I think something went wrong. Try{" "}
+              <Link
+                href="/signIn"
+                className="group text-sky-600 transition duration-300 inline-block"
+              >
+                sign in
+                <span
+                  className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-sky-600"
+                  aria-hidden="true"
+                />
+              </Link>{" "}
+              again
+            </p>
+          )}
         </>
       }
       description={
         <div className="mt-4">
-          <p>
-            <strong>your username</strong>:{" "}
-            {userData?.user?.username ?? "loading..."}
-          </p>
-          <p>
-            <strong>your global_name</strong>:{" "}
-            {userData?.user?.global_name ?? "loading..."}
-          </p>
-
-          <Web3Login isDisabled={false} />
+          <Web3Login isDisabled={!userData} />
         </div>
       }
     />

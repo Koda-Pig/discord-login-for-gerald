@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { UserCard } from "@/components/user-card";
 import { useSearchParams } from "next/navigation";
 import { SignInButton } from "@/components/sign-in-button";
+import { Web3Login } from "@/components/web3-login";
+import { useAccount } from "wagmi";
+
+const SUBMIT_ENDPOINT = "http://34.57.39.86:3000/user-address";
 
 interface DiscordUser {
   user: {
@@ -13,6 +17,40 @@ interface DiscordUser {
     avatar: string;
   };
 }
+
+const sendUserData = async ({
+  username,
+  walletAddress
+}: {
+  username: string;
+  walletAddress: string;
+}) => {
+  try {
+    const body = JSON.stringify({
+      user: username,
+      address: walletAddress
+    });
+
+    const response = await fetch(SUBMIT_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: body
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    alert(`Successfully sent user data: ${data}`);
+    return data;
+  } catch (error) {
+    console.error("Error sending user data:", error);
+    throw error;
+  }
+};
 
 const handleOAuthCallback = async ({
   code,
@@ -47,11 +85,39 @@ export default function UserCardWithParams() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const [userData, setUserData] = useState<DiscordUser | null>(null);
+  const [dataSent, setDataSent] = useState(false);
+
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (!code) return;
+    if (!code || userData) return;
     handleOAuthCallback({ code, setUserData: (data) => setUserData(data) });
   }, [code]);
+
+  useEffect(() => {
+    const sendData = async () => {
+      if (
+        !isConnected ||
+        !address ||
+        !userData?.user?.global_name ||
+        dataSent
+      ) {
+        return;
+      }
+
+      try {
+        await sendUserData({
+          username: userData.user.global_name,
+          walletAddress: address
+        });
+        setDataSent(true);
+      } catch (error) {
+        console.error("Failed to send user data:", error);
+      }
+    };
+
+    sendData();
+  }, [isConnected]);
 
   if (!code) {
     return (
@@ -81,9 +147,6 @@ export default function UserCardWithParams() {
       description={
         <div className="mt-4">
           <p>
-            <strong>your ID</strong>: {userData?.user?.id ?? "loading..."}
-          </p>
-          <p>
             <strong>your username</strong>:{" "}
             {userData?.user?.username ?? "loading..."}
           </p>
@@ -91,10 +154,8 @@ export default function UserCardWithParams() {
             <strong>your global_name</strong>:{" "}
             {userData?.user?.global_name ?? "loading..."}
           </p>
-          <p>
-            <strong>your avatar</strong>:{" "}
-            {userData?.user?.avatar ?? "loading..."}
-          </p>
+
+          <Web3Login label="connect wallet" isDisabled={!userData} />
         </div>
       }
     />

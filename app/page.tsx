@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/container";
-import { Web3Login } from "@/components/web3-login";
 
 export default function Page() {
   return (
@@ -20,8 +19,6 @@ export default function Page() {
         <Button asChild>
           <Link href="/signIn">Sign in</Link>
         </Button>
-
-        <Web3Login />
       </div>
     </Container>
   );

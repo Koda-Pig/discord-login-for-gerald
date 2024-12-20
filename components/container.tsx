@@ -1,12 +1,21 @@
+import Image from "next/image";
+
 interface ContainerProps {
-  bgImgClass: string;
+  bg: number;
   children: React.ReactNode;
 }
 
-export function Container({ children, bgImgClass }: Readonly<ContainerProps>) {
+export function Container({ children, bg }: Readonly<ContainerProps>) {
   return (
-    <div className={`${bgImgClass} bg-cover bg-center`}>
-      <div className="bg-black/75 min-h-svh grid h-full place-items-center p-6 md:p-10">
+    <div className={`relative`}>
+      <Image
+        src={`/images/gerald-bg-${bg}.webp`}
+        alt="decorative"
+        fill
+        sizes="100vw"
+        className="aspect-square object-center object-cover h-auto -z-10"
+      />
+      <div className="bg-black/80 min-h-svh grid h-full place-items-center p-6 md:p-10">
         {children}
       </div>
     </div>

@@ -13,17 +13,8 @@ async function exchangeCode(code: string) {
     redirect_uri: redirectUri
   });
 
-  console.log("Making token exchange request with:", {
-    client_id: process.env.DISCORD_APPLICATION_ID!,
-    client_secret: process.env.DISCORD_API_TOKEN!,
-    grant_type: "authorization_code",
-    code: code,
-    redirect_uri: redirectUri
-  });
-
   try {
-    // const response = await fetch(`${DISCORD_API_URL}/api/v10/oauth2/token`, {
-    const response = await fetch(`${DISCORD_API_URL}/api/oauth2/token`, {
+    const response = await fetch(`${DISCORD_API_URL}/api/v10/oauth2/token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -31,41 +22,23 @@ async function exchangeCode(code: string) {
       body: params
     });
 
-    console.log("response: ", response);
-
-    // Store response data immediately
-    const responseData = await response.json().catch((e) => {
-      console.error("Failed to parse response:", e);
-      return null;
-    });
-
-    // console.log("Discord response status:", response.status);
+    const responseData = await response.json();
 
     if (!response.ok) {
-      console.error("Discord error response:", responseData);
-      throw new Error(
-        `Token exchange failed: ${
-          responseData?.error_description ||
-          responseData?.error ||
-          `HTTP ${response.status}`
-        }`
-      );
-    }
-
-    if (!responseData) {
-      throw new Error("Failed to get token data from Discord");
+      console.error("Token exchange failed", {
+        status: response.status,
+        error: responseData.error,
+        error_description: responseData.error_description
+      });
+      throw new Error(responseData.error_description || responseData.error);
     }
 
     return responseData;
   } catch (error) {
-    console.error("Detailed error in exchangeCode:", {
-      error,
-      env: {
-        hasClientId: !!process.env.DISCORD_APPLICATION_ID,
-        hasClientSecret: !!process.env.DISCORD_API_TOKEN,
-        hasNextAuthUrl: !!process.env.NEXTAUTH_URL
-      }
-    });
+    console.error(
+      "Exchange error:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     throw error;
   }
 }
@@ -90,7 +63,10 @@ async function getUserInfo(access_token: string) {
 
     return data;
   } catch (error) {
-    console.error("Error in getUserInfo:", error);
+    console.error(
+      "User info error:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     throw error;
   }
 }
@@ -108,10 +84,12 @@ export async function POST(request: Request) {
     }
 
     const tokenData = await exchangeCode(code);
-    console.log("Token exchange successful");
+
+    if (!tokenData.access_token) {
+      throw new Error("No access token received");
+    }
 
     const userInfo = await getUserInfo(tokenData.access_token);
-    console.log("User info fetched successfully");
 
     const response = NextResponse.json({
       user: {
@@ -122,25 +100,12 @@ export async function POST(request: Request) {
       }
     });
 
-    response.cookies.set("discord_access_token", tokenData.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: tokenData.expires_in
-    });
-
-    if (tokenData.refresh_token) {
-      response.cookies.set("discord_refresh_token", tokenData.refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 30 * 24 * 60 * 60
-      });
-    }
-
     return response;
   } catch (error) {
-    console.error("Discord callback error:", error);
+    console.error(
+      "Auth error:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     return NextResponse.json(
       {
         error: "Authentication failed",

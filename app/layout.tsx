@@ -13,6 +13,11 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900"
 });
+const apfelGrotezk = localFont({
+  src: "./fonts/ApfelGrotezk-Regular.woff",
+  variable: "--font-apfel-grotezk",
+  weight: "100 900"
+});
 
 export const metadata: Metadata = {
   title: "Login to Gerald AI™",
@@ -28,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${apfelGrotezk.variable} antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

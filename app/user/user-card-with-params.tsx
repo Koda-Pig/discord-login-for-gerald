@@ -155,7 +155,7 @@ export default function UserCardWithParams() {
             {userData?.user?.global_name ?? "loading..."}
           </p>
 
-          <Web3Login isDisabled={!userData} />
+          <Web3Login isDisabled={false} />
         </div>
       }
     />

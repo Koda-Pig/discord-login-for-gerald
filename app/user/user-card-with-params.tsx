@@ -163,7 +163,7 @@ export default function UserCardWithParams() {
         <>
           Hello{" "}
           <span className="font-bold">{userData?.user?.username ?? "..."}</span>
-          {hasError && !isLoading && (
+          {hasError && !isLoading && userData === null && (
             <p className="mt-3 mb-5">
               I think something went wrong. Try{" "}
               <Link

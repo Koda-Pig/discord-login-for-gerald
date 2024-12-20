@@ -1,10 +1,3 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
 import { SignOutButton } from "@/components/sign-out-button";
 
 interface UserCardProps {
@@ -19,16 +12,10 @@ export function UserCard({
   showSignout = true
 }: Readonly<UserCardProps>) {
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      {showSignout ?? (
-        <CardContent>
-          <SignOutButton />
-        </CardContent>
-      )}
-    </Card>
+    <div className="text-center">
+      <h1 className="text-3xl mb-6">{title}</h1>
+      <div className="mb-14 text-xl">{description}</div>
+      {showSignout ?? <SignOutButton />}
+    </div>
   );
 }

@@ -4,14 +4,14 @@
 .container > div {
   justify-content: center !important;
 }
-.container button {
+.container:not(:has(button + button)) button {
   font-family: "ApfelGrotezk", Helvetica, sans-serif !important;
   background-color: var(--gerald-blue) !important;
   border-radius: calc(var(--radius) - 2px) !important;
   font-size: 1.5rem !important;
   font-weight: normal !important;
 }
-.container button:hover {
+.container:not(:has(button + button)) button:hover {
   transform: none !important;
   background-color: var(--gerald-blue-10) !important;
 }

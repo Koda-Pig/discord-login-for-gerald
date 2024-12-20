@@ -66,6 +66,7 @@ const handleOAuthCallback = async ({
       headers: {
         "Content-Type": "application/json"
       },
+      mode: "no-cors",
       body: JSON.stringify({ code })
     });
 

@@ -37,7 +37,6 @@ const sendUserData = async ({
       headers: {
         "Content-Type": "application/json"
       },
-      mode: "no-cors",
       body: body
     });
 

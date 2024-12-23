@@ -8,64 +8,57 @@ import { Web3Login } from "@/components/web3-login";
 import { useAccount } from "wagmi";
 import { useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { useMutation } from "@tanstack/react-query";
 
 const SUBMIT_ENDPOINT = "https://gerald.celium.network/user-address";
 
-const sendUserData = async ({
-  username,
-  walletAddress
-}: {
+interface UserData {
   username: string;
   walletAddress: string;
-}) => {
-  try {
-    const response = await fetch(SUBMIT_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user: username,
-        address: walletAddress
-      })
-    });
+}
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+const sendUserData = async ({ username, walletAddress }: UserData) => {
+  const response = await fetch(SUBMIT_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      user: username,
+      address: walletAddress
+    })
+  });
 
-    const data = await response.json();
-    console.info(`Successfully sent user data: ${data}`);
-
-    return data;
-  } catch (error) {
-    console.error("Error sending user data:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+
+  return response.json();
 };
 
 export default function UserCardWithParams() {
   const { data: session, status } = useSession();
   const { address, isConnected } = useAccount();
 
+  const mutation = useMutation({
+    mutationFn: sendUserData,
+    onSuccess: (data) => {
+      console.info("Successfully sent user data: ", data);
+    },
+    onError: (error) => {
+      console.error("Failed to send user data: ", error);
+    }
+  });
+
   useEffect(() => {
-    const sendData = async () => {
-      if (!isConnected || !address || !session?.user?.name) {
-        return;
-      }
-
-      try {
-        await sendUserData({
-          username: session.user.name,
-          walletAddress: address
-        });
-      } catch (error) {
-        console.error("Failed to send user data:", error);
-      }
-    };
-
-    sendData();
+    if (isConnected && address && session?.user?.name && !mutation.isSuccess) {
+      mutation.mutate({
+        username: session.user.name,
+        walletAddress: address
+      });
+    }
   }, [isConnected]);
+  // }, [isConnected, address, session?.user?.name, mutation]);
 
   if (status === "loading") {
     return <LoadingSpinner />;

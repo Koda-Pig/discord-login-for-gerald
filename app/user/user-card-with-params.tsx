@@ -80,7 +80,7 @@ export default function UserCardWithParams() {
           <>
             I think something went wrong. Try{" "}
             <Link
-              href="/signIn"
+              href="/"
               className="group text-sky-600 transition duration-300 inline-block"
             >
               sign in{" "}

@@ -1,6 +1,5 @@
-import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { SignInButton } from "@/components/sign-in-button";
 
 export default function Page() {
   return (
@@ -14,9 +13,7 @@ export default function Page() {
         priority
         className="mb-16"
       />
-      <Button asChild>
-        <Link href="/signIn">sign in</Link>
-      </Button>
+      <SignInButton />
     </div>
   );
 }

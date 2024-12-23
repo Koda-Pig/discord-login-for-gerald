@@ -13,6 +13,7 @@ const handler = NextAuth({
       }
     })
   ],
+  debug: true,
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/signIn"

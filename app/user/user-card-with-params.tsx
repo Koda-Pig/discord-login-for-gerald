@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect } from "react";
 import { UserCard } from "@/components/user-card";
-import { useSearchParams } from "next/navigation";
-import { SignInButton } from "@/components/sign-in-button";
 import { Web3Login } from "@/components/web3-login";
 import { useAccount } from "wagmi";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
+import { LoadingSpinner } from "@/components/loading-spinner";
 
 const SUBMIT_ENDPOINT = "https://gerald.celium.network/user-address";
 
@@ -20,17 +19,15 @@ const sendUserData = async ({
   walletAddress: string;
 }) => {
   try {
-    const body = JSON.stringify({
-      user: username,
-      address: walletAddress
-    });
-
     const response = await fetch(SUBMIT_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: body
+      body: JSON.stringify({
+        user: username,
+        address: walletAddress
+      })
     });
 
     if (!response.ok) {
@@ -38,7 +35,8 @@ const sendUserData = async ({
     }
 
     const data = await response.json();
-    alert(`Successfully sent user data: ${data}`);
+    console.info(`Successfully sent user data: ${data}`);
+
     return data;
   } catch (error) {
     console.error("Error sending user data:", error);
@@ -47,10 +45,7 @@ const sendUserData = async ({
 };
 
 export default function UserCardWithParams() {
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");
   const { data: session, status } = useSession();
-
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
@@ -72,15 +67,28 @@ export default function UserCardWithParams() {
     sendData();
   }, [isConnected]);
 
-  if (!code) {
+  if (status === "loading") {
+    return <LoadingSpinner />;
+  }
+
+  if (status === "unauthenticated") {
     return (
       <UserCard
         showSignout={false}
-        title="I'm afraid I have no idea who you are"
+        title="I think something went wrong. Try"
         description={
           <>
-            <p className="mb-4">Try login again maybe?</p>
-            <SignInButton />
+            <Link
+              href="/signIn"
+              className="group text-sky-600 transition duration-300 inline-block"
+            >
+              sign in
+              <span
+                className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-sky-600"
+                aria-hidden="true"
+              />
+            </Link>{" "}
+            again
           </>
         }
       />
@@ -93,22 +101,6 @@ export default function UserCardWithParams() {
         <>
           Hello{" "}
           <span className="font-bold">{session?.user?.name ?? "..."}</span>
-          {status === "unauthenticated" && (
-            <p className="mt-3 mb-5 text-xl">
-              I think something went wrong. Try{" "}
-              <Link
-                href="/signIn"
-                className="group text-sky-600 transition duration-300 inline-block"
-              >
-                sign in
-                <span
-                  className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-sky-600"
-                  aria-hidden="true"
-                />
-              </Link>{" "}
-              again
-            </p>
-          )}
         </>
       }
       description={
@@ -122,7 +114,7 @@ export default function UserCardWithParams() {
               className="mx-auto rounded-full"
             />
           )}
-          <Web3Login isDisabled={status === "unauthenticated"} />
+          <Web3Login isDisabled={status !== "authenticated"} />
         </div>
       }
     />

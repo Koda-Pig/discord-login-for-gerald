@@ -57,8 +57,8 @@ export default function UserCardWithParams() {
         walletAddress: address
       });
     }
-  }, [isConnected]);
-  // }, [isConnected, address, session?.user?.name, mutation]);
+    // }, [isConnected]);
+  }, [isConnected, address, session?.user?.name, mutation]);
 
   if (status === "loading") {
     return <LoadingSpinner />;

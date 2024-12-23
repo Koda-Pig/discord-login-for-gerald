@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "react";
 import { UserCard } from "@/components/user-card";
 import { Web3Login } from "@/components/web3-login";
-import { useAccount } from "wagmi";
+import { useAccountEffect } from "wagmi";
 import { useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { useMutation } from "@tanstack/react-query";
@@ -18,27 +17,30 @@ interface UserData {
 }
 
 const sendUserData = async ({ username, walletAddress }: UserData) => {
-  const response = await fetch(SUBMIT_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      user: username,
-      address: walletAddress
-    })
-  });
+  try {
+    const response = await fetch(SUBMIT_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user: username,
+        address: walletAddress
+      })
+    });
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error in sendUserData: ", error);
   }
-
-  return response.json();
 };
 
 export default function UserCardWithParams() {
   const { data: session, status } = useSession();
-  const { address, isConnected } = useAccount();
 
   const mutation = useMutation({
     mutationFn: sendUserData,
@@ -47,18 +49,23 @@ export default function UserCardWithParams() {
     },
     onError: (error) => {
       console.error("Failed to send user data: ", error);
-    }
+    },
+    retry: 3,
+    retryDelay: 1000
   });
 
-  useEffect(() => {
-    if (isConnected && address && session?.user?.name && !mutation.isSuccess) {
+  useAccountEffect({
+    onConnect(data) {
+      if (!session?.user?.name) {
+        console.error("User name not found: ", session?.user);
+        return;
+      }
       mutation.mutate({
         username: session.user.name,
-        walletAddress: address
+        walletAddress: data.address
       });
     }
-    // }, [isConnected]);
-  }, [isConnected, address, session?.user?.name, mutation]);
+  });
 
   if (status === "loading") {
     return <LoadingSpinner />;

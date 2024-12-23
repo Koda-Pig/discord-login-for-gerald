@@ -5,12 +5,13 @@ const handler = NextAuth({
   providers: [
     Discord({
       clientId: process.env.DISCORD_APPLICATION_ID!,
-      clientSecret: process.env.DISCORD_API_TOKEN!
-      // authorization: {
-      //   params: {
-      //     redirect_uri: `${process.env.NEXTAUTH_URL}/user`
-      //   }
-      // }
+      clientSecret: process.env.DISCORD_API_TOKEN!,
+      profile(profile) {
+        return {
+          ...profile,
+          name: profile.global_name ?? profile.username
+        };
+      }
     })
   ],
   secret: process.env.NEXTAUTH_SECRET,

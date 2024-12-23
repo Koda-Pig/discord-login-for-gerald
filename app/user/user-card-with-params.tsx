@@ -1,23 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { UserCard } from "@/components/user-card";
 import { useSearchParams } from "next/navigation";
 import { SignInButton } from "@/components/sign-in-button";
 import { Web3Login } from "@/components/web3-login";
 import { useAccount } from "wagmi";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const SUBMIT_ENDPOINT = "https://gerald.celium.network/user-address";
-
-interface DiscordUser {
-  user: {
-    id: string;
-    username: string;
-    global_name: string;
-    avatar: string;
-  };
-}
 
 const sendUserData = async ({
   username,
@@ -53,87 +46,24 @@ const sendUserData = async ({
   }
 };
 
-const handleOAuthCallback = async ({
-  code,
-  setUserData
-}: {
-  code: string;
-  setUserData: (x: null | DiscordUser) => void;
-}) => {
-  try {
-    const response = await fetch("/api/auth/discord/callback", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ code })
-    });
-
-    if (!response.ok) {
-      console.error("Login failed. Response: ", response);
-      setUserData(null);
-      return;
-    }
-
-    const data = await response.json();
-    setUserData(data);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export default function UserCardWithParams() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const [userData, setUserData] = useState<DiscordUser | null>(null);
-  const [dataSent, setDataSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const { data: session, status } = useSession();
 
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (!code || userData) return;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      setHasError(false);
-      try {
-        await handleOAuthCallback({
-          code,
-          setUserData: (data) => {
-            setUserData(data);
-            if (!data) setHasError(true);
-          }
-        });
-        // eslint-disable-next-line
-      } catch (error) {
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [code]);
-
-  useEffect(() => {
     const sendData = async () => {
-      if (
-        !isConnected ||
-        !address ||
-        !userData?.user?.global_name ||
-        dataSent
-      ) {
+      if (!isConnected || !address || !session?.user?.name) {
         return;
       }
 
       try {
         await sendUserData({
-          username: userData.user.global_name,
+          username: session.user.name,
           walletAddress: address
         });
-        setDataSent(true);
       } catch (error) {
         console.error("Failed to send user data:", error);
       }
@@ -162,8 +92,8 @@ export default function UserCardWithParams() {
       title={
         <>
           Hello{" "}
-          <span className="font-bold">{userData?.user?.username ?? "..."}</span>
-          {hasError && !isLoading && userData === null && (
+          <span className="font-bold">{session?.user?.name ?? "..."}</span>
+          {status === "unauthenticated" && (
             <p className="mt-3 mb-5 text-xl">
               I think something went wrong. Try{" "}
               <Link
@@ -183,7 +113,16 @@ export default function UserCardWithParams() {
       }
       description={
         <div className="mt-4">
-          <Web3Login isDisabled={!userData} />
+          {session?.user?.image && (
+            <Image
+              src={session.user.image}
+              alt={session.user?.name ?? ""}
+              width={128}
+              height={128}
+              className="mx-auto rounded-full"
+            />
+          )}
+          <Web3Login isDisabled={status === "unauthenticated"} />
         </div>
       }
     />

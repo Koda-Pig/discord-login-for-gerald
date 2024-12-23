@@ -8,6 +8,7 @@ import { useAccountEffect } from "wagmi";
 import { useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { useMutation } from "@tanstack/react-query";
+import { SignOutButton } from "@/components/sign-out-button";
 
 const SUBMIT_ENDPOINT = "https://gerald.celium.network/user-address";
 
@@ -115,6 +116,9 @@ export default function UserCardWithParams() {
             />
           )}
           <Web3Login isDisabled={status !== "authenticated"} />
+          <div className="my-5">
+            <SignOutButton />
+          </div>
         </div>
       }
     />

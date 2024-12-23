@@ -164,7 +164,7 @@ export default function UserCardWithParams() {
           Hello{" "}
           <span className="font-bold">{userData?.user?.username ?? "..."}</span>
           {hasError && !isLoading && userData === null && (
-            <p className="mt-3 mb-5">
+            <p className="mt-3 mb-5 text-xl">
               I think something went wrong. Try{" "}
               <Link
                 href="/signIn"

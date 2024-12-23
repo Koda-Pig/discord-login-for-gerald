@@ -11,7 +11,7 @@ export function SignInButton() {
 
   return (
     <Button type="button" onClick={handleDiscordSignIn}>
-      Sign in
+      sign in with discord
       <Image
         src="/icons/discord.svg"
         alt="discord logo"

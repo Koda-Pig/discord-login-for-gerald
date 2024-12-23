@@ -3,12 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
-export function SignOutButton() {
+interface SignOutButtonProps {
+  className?: string;
+}
+
+export function SignOutButton({
+  className = "w-full"
+}: Readonly<SignOutButtonProps>) {
   const handleDiscordSignOut = () => signOut({ callbackUrl: "/" });
 
   return (
-    <Button className="w-full" onClick={handleDiscordSignOut}>
-      Sign out
+    <Button className={className} onClick={handleDiscordSignOut}>
+      sign out
     </Button>
   );
 }

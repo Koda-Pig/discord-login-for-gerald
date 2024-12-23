@@ -8,7 +8,6 @@ import { useAccountEffect } from "wagmi";
 import { useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { useMutation } from "@tanstack/react-query";
-import { SignOutButton } from "@/components/sign-out-button";
 
 const SUBMIT_ENDPOINT = "https://gerald.celium.network/user-address";
 
@@ -76,20 +75,21 @@ export default function UserCardWithParams() {
     return (
       <UserCard
         showSignout={false}
-        title="I think something went wrong. Try"
+        title="Oops!"
         description={
           <>
+            I think something went wrong. Try{" "}
             <Link
               href="/signIn"
               className="group text-sky-600 transition duration-300 inline-block"
             >
-              sign in
+              sign in{" "}
               <span
                 className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-sky-600"
                 aria-hidden="true"
               />
-            </Link>{" "}
-            again
+            </Link>
+            again.
           </>
         }
       />
@@ -116,9 +116,6 @@ export default function UserCardWithParams() {
             />
           )}
           <Web3Login isDisabled={status !== "authenticated"} />
-          <div className="my-5">
-            <SignOutButton />
-          </div>
         </div>
       }
     />

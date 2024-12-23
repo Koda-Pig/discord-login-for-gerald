@@ -17,7 +17,7 @@ export default function Page() {
           className="mb-16"
         />
         <Button asChild>
-          <Link href="/signIn">Sign in</Link>
+          <Link href="/signIn">sign in</Link>
         </Button>
       </div>
     </Container>

@@ -7,9 +7,15 @@ const handler = NextAuth({
       clientId: process.env.DISCORD_APPLICATION_ID!,
       clientSecret: process.env.DISCORD_API_TOKEN!,
       profile(profile) {
+        let imgUrl = undefined;
+        if (profile.id && profile.avatar) {
+          imgUrl = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`;
+        }
         return {
           ...profile,
-          name: profile.global_name ?? profile.username
+          id: profile.id,
+          name: profile.global_name ?? profile.username,
+          image: imgUrl
         };
       }
     })
